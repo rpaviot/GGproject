@@ -180,9 +180,7 @@ class lensingPCF:
 
         xirppi_t = np.zeros((len(pi),nbins))
         xirppi_x = np.zeros((len(pi),nbins))
-        varg_2d = np.zeros((len(pi),nbins))
-        meanr_2d = np.zeros((len(pi),nbins))
-        meanlogr_2d = np.zeros((len(pi),nbins))
+        varg= np.zeros((len(pi),nbins))
         for i in range(0,len(pi)-1):
             pi_min = pi[i]
             pi_max = pi[i] + dpi
@@ -190,25 +188,13 @@ class lensingPCF:
             rg = treecorr.NGCorrelation(bin_type='Log',nbins=nbins,min_sep=min,max_sep=max,min_rpar=pi_min,max_rpar=pi_max,metric="Rperp")
             ng.process_cross(self.data1,self.data2)
             rg.process_cross(self.rand1,self.data2)
-            ng.varxi = self.varg
-
-            #rr = treecorr.NNCorrelation(bin_type='Log',nbins=nbins,min_sep=min,max_sep=max,min_rpar=pi_min,max_rpar=pi_max,metric="Rperp")
-            #rr.process_cross(self.rand1,self.rand2)
-            #norm1 = rr.weight*self.factor2
-            #norm2 = rr.weight*self.factor3
-            
+  
             xirppi_t[i] = (ng.xi/rg.weight)*(self.rgnorm/self.ngnorm) - rg.xi/rg.weight
             xirppi_x[i] = (ng.xi_im/rg.weight)*(self.rgnorm/self.ngnorm) - rg.xi_im/rg.weight
-            varg_2d[i] = self.varg/rg.weight*(self.rgnorm/self.ngnorm)
-            meanr_2d[i] = ng.meanr/ng.weight
-            meanlogr_2d[i] = ng.meanlogr/ng.weight
+            varg[i] = self.varg/rg.weight*(self.rgnorm/self.ngnorm)
 
         xit = np.sum(xirppi_t*dpi,axis=0)
         xip = np.sum(xirppi_x*dpi,axis=0)
-        #DD_2d[i] += ng.npairs
-        #DS_2D[i] += ng.weights
-        varg = np.sum(varg_2d,axis=0)
-        meanr = np.sum(meanr_2d,axis=0)
-        meanlogr = np.sum(meanlogr_2d,axis=0)
+        varg = np.sum(varg,axis=0)
 
-        return ng.rnom,meanr,meanlogr,xit,xip,varg
+        return rg.rnom,xit,xip,np.sqrt(varg)
