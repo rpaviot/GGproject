@@ -1,4 +1,5 @@
 # GGproject
 
 Pipeline for eBOSSxDES and Euclid work.
-Example notebook might need to be updated.
+Example notebooks might need to be updated.
+Main .py are in tools
